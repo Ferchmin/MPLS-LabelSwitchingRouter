@@ -26,30 +26,34 @@ namespace MPLS_Router
             ushort keyPart2 = packet.MplsLabel;
             string key = keyPart1.ToString() + "&" + keyPart2.ToString();
             string value = dev.Configuration.LFIBTable[key];
-            string[] valueParts = value.Split('&');
-            string cloudHeaderOut = valueParts[0];
-            string labelOut = valueParts[1];
-            ushort s = 1;
-            string operation = valueParts[2];
-            switch (operation)
+            if (value != null)
             {
-                case "pop":
-                    packet.DeleteMplsHeader();
-                    fpacket = packet.Packet;
-                    dev.Forward.ForwardingPacket(fpacket);
-                break;
-                case "swap":
-                    packet.ChangeMplsHeader(packet.BottomOfTheStack, ushort.Parse(cloudHeaderOut));
-                    packet.ChangeCloudHeader(ushort.Parse(labelOut));
-                break;
-                case "push":
-                    packet.AddMplsHeader((ushort)(packet.BottomOfTheStack + s), ushort.Parse(labelOut));
-                    packet.ChangeCloudHeader(ushort.Parse(cloudHeaderOut));
-                break;
-                default:
+                string[] valueParts = value.Split('&');
+                string cloudHeaderOut = valueParts[0];
+                string labelOut = valueParts[1];
+                ushort s = 1;
+                string operation = valueParts[2];
+                switch (operation)
+                {
+                    case "pop":
+                        packet.DeleteMplsHeader();
+                        fpacket = packet.Packet;
+                        dev.Forward.ForwardingPacket(fpacket);
+                        break;
+                    case "swap":
+                        packet.ChangeMplsHeader(packet.BottomOfTheStack, ushort.Parse(cloudHeaderOut));
+                        packet.ChangeCloudHeader(ushort.Parse(labelOut));
+                        fpacket = packet.Packet;
+                        break;
+                    case "push":
+                        packet.AddMplsHeader((ushort)(packet.BottomOfTheStack + s), ushort.Parse(cloudHeaderOut));
+                        packet.ChangeCloudHeader(ushort.Parse(labelOut));
+                        break;
+                    default:
 
-                break;
+                        break;
 
+                }
             }
             fpacket = packet.Packet;
             return fpacket;
