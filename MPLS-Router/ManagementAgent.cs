@@ -145,10 +145,9 @@ namespace MPLS_Router
         public bool ProcessReceivedPacket(byte[] pack)
         {
             ManagementPacket packet = new ManagementPacket(pack);
-            packet.ReadManagementHeader();
+            packet.ReadHolePacket();
             if (packet.DataIdentifier == 2)
             {
-                packet.ReadData();
                 bool flag = ProcessCommand(packet.Data);
                 return flag;
             }
@@ -170,10 +169,15 @@ namespace MPLS_Router
         public bool AddNewKey(string[] part)
         {
             string key = part[1] + "&" + part[2];
-            string value = part[3] + "&" + part[4] + "&" +part[4];
+            string value = part[3] + "&" + part[4] + "&" + part[5];
             try
             {
                 dev.Configuration.LFIBTable.Add(key, value);
+             /*   foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
+                {
+                    //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                    Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                }*/
                 return true;
             }
             catch(ArgumentException)
@@ -185,6 +189,11 @@ namespace MPLS_Router
         {
             string key = part[1] + "&" + part[2];
             bool flag = dev.Configuration.LFIBTable.Remove(key);
+           /* foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
+            {
+                //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+            }*/
             return flag;
         }
         #endregion

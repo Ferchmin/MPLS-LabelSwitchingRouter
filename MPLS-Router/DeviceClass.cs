@@ -48,6 +48,7 @@ namespace MPLS_Router
             Console.WriteLine("Program działa - aby wyłączyć wpisz end.");
             do
             {
+              
                 end = Console.ReadLine();
             }
             while (end != "end");
