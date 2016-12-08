@@ -90,7 +90,7 @@ namespace MPLS_Router
 
             //generujemy logi
             Console.WriteLine("Otrzymaliśmy pakiet od: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(receivedPacket));
+            
 
             //przesyłam pakiet do metody przetwarzającej
             packet = dev.Forward.ForwardingPacket(receivedPacket);
@@ -119,7 +119,7 @@ namespace MPLS_Router
 
             //tworzmy log zdarzenia
             Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
+            
         }
 
         /*
@@ -143,7 +143,7 @@ namespace MPLS_Router
 
             //tworzmy log zdarzenia
             Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
+            
         }
     }
 }
