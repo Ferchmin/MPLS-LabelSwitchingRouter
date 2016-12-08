@@ -57,7 +57,7 @@ namespace MPLS_Router
             mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             myIpEndPoint = new IPEndPoint((IPAddress.Parse(myIpAddress)), myPort);
             mySocket.Bind(myIpEndPoint);
-
+            DeviceClass.MakeLog("INFO - Router Socket: IP:" + myIpAddress + " Port:" + myPort);
             //tworzymy punkt końcowy chmury kablowej
             cloudIPEndPoint = new IPEndPoint((IPAddress.Parse(cloudIpAddress)), cloudPort);
             cloudEndPoint = (EndPoint)cloudIPEndPoint;
@@ -67,6 +67,7 @@ namespace MPLS_Router
 
             //nasłuchujemy
             mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref cloudEndPoint, new AsyncCallback(ReceivedPacket), null);
+            DeviceClass.MakeLog("INFO - Start Listening.");
         }
 
         /*
@@ -89,8 +90,8 @@ namespace MPLS_Router
             receivedIPEndPoint = (IPEndPoint)cloudEndPoint;
 
             //generujemy logi
-            Console.WriteLine("Otrzymaliśmy pakiet od: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            
+            DeviceClass.MakeLog("INFO - Received packet from: IP:" + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
+
 
             //przesyłam pakiet do metody przetwarzającej
             packet = dev.Forward.ForwardingPacket(receivedPacket);
@@ -116,10 +117,10 @@ namespace MPLS_Router
         {
             //kończymy wysyłanie pakietu - funkcja zwraca rozmiar wysłanego pakietu
             int size = mySocket.EndSendTo(res);
-
+            var endPoint = res.AsyncState as IPEndPoint;
             //tworzmy log zdarzenia
-            Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            
+            DeviceClass.MakeLog("INFO - Packet send to: IP:" + endPoint.Address + " Port: " + endPoint.Port);
+
         }
 
         /*
@@ -142,7 +143,7 @@ namespace MPLS_Router
             mySocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, cloudEndPoint, new AsyncCallback(SendPacket), null);
 
             //tworzmy log zdarzenia
-            Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
+            //Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
             
         }
     }

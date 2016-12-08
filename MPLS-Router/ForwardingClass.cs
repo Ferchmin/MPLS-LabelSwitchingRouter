@@ -22,8 +22,9 @@ namespace MPLS_Router
             packet = new MPLSPacket(receivedPacket);
             packet.ReadCloudHeader();
             packet.ReadMplsHeader();
-            ushort keyPart1 = packet.SourceInterface;
-            ushort keyPart2 = packet.MplsLabel;
+            ushort keyPart2 = packet.SourceInterface;
+            ushort keyPart1 = packet.MplsLabel;
+            DeviceClass.MakeLog("INFO - Packet's label:" + keyPart1 + " Interface: " + keyPart2);
             string key = keyPart1.ToString() + "&" + keyPart2.ToString();
             string value = dev.Configuration.LFIBTable[key];
             if (value != null)
@@ -38,16 +39,22 @@ namespace MPLS_Router
                     case "pop":
                         packet.DeleteMplsHeader();
                         fpacket = packet.Packet;
+                        DeviceClass.MakeLog("INFO - Popped label.");
                         dev.Forward.ForwardingPacket(fpacket);
                         break;
                     case "swap":
                         packet.ChangeMplsHeader(packet.BottomOfTheStack, ushort.Parse(cloudHeaderOut));
                         packet.ChangeCloudHeader(ushort.Parse(labelOut));
                         fpacket = packet.Packet;
+                        DeviceClass.MakeLog("INFO - Swapped label.");
+                        dev.Forward.ForwardingPacket(fpacket);
                         break;
                     case "push":
                         packet.AddMplsHeader((ushort)(packet.BottomOfTheStack + s), ushort.Parse(cloudHeaderOut));
                         packet.ChangeCloudHeader(ushort.Parse(labelOut));
+                        fpacket = packet.Packet;
+                        DeviceClass.MakeLog("INFO - Pushed label.");
+                        dev.Forward.ForwardingPacket(fpacket);
                         break;
                     default:
 

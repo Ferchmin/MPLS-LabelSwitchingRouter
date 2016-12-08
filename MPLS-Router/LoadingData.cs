@@ -12,11 +12,11 @@ namespace MPLS_Router
     static class LoadingData
     {
         public static EntryData data { get; set; }
-        public static EntryData Deserialization()
+        public static EntryData Deserialization(string filepath)
         {
             object obj;
             XmlSerializer deserializer = new XmlSerializer(typeof(EntryData));
-            using (TextReader reader = new StreamReader(@"EntryData.xml"))
+            using (TextReader reader = new StreamReader(@filepath))
             {
                 obj = deserializer.Deserialize(reader);
             }

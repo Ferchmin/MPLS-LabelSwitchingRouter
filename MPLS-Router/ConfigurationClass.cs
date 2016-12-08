@@ -27,10 +27,10 @@ namespace MPLS_Router
         public int mplsPortNumber { get; private set; }
         public int agentPortNumber { get; private set; }
         public Dictionary<string, string> LFIBTable;
-        public ConfigurationClass()
+        public ConfigurationClass(string filepath)
         {
             LFIBTable = new Dictionary<string, string>();
-            var config = LoadingData.Deserialization();
+            var config = LoadingData.Deserialization(filepath);
             ManagmentIPAdd = config.ManagmentIPAdd;
             ManagmentPortNumber = config.ManagmentPortNumber;
             CloudIPAdd = config.CloudIPAdd;

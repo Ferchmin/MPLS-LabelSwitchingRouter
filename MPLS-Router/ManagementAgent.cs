@@ -48,7 +48,7 @@ namespace MPLS_Router
             agentSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             myIPEndPoint = new IPEndPoint((IPAddress.Parse(myIPAddress)), agentPort);
             agentSocket.Bind(myIPEndPoint);
-
+            DeviceClass.MakeLog("INFO - Agent Socket: IP:" + myIPAddress + " Port:" +agentPort);
 
             //tworzymy punkt końcowy centrum zarzadzania
             managementIPEndPoint = new IPEndPoint((IPAddress.Parse(managementIPAddress)), managementPort);
@@ -64,6 +64,7 @@ namespace MPLS_Router
 
             //nasłuchujemy
             agentSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref managementEndPoint, new AsyncCallback(ReceivedPacket), null);
+            DeviceClass.MakeLog("INFO - Start Listening.");
         }
 
         private void SendIsUp()
@@ -72,10 +73,10 @@ namespace MPLS_Router
             packet = pack.CreatePacket(0, myIPAddress, managementIPAddress);
             //inicjuje start wysyłania przetworzonego pakietu do nadawcy
             agentSocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
-
+            DeviceClass.MakeLog("INFO - Sent isUp notification to:" + managementEndPoint );
             //tworzmy log zdarzenia
-          //  Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-          //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
+            //  Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
+            //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
         }
         private void SendKeepAlive(object source, ElapsedEventArgs e)
         {
@@ -83,7 +84,7 @@ namespace MPLS_Router
             packet = pack.CreatePacket(1, myIPAddress, managementIPAddress);
             //inicjuje start wysyłania przetworzonego pakietu do nadawcy
             agentSocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
-
+            DeviceClass.MakeLog("INFO - Sent keepAlive notification to:" + managementEndPoint);
             //tworzmy log zdarzenia
             //Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
             //Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
@@ -113,8 +114,9 @@ namespace MPLS_Router
             receivedIPEndPoint = (IPEndPoint)managementEndPoint;
 
             //generujemy logi
+            DeviceClass.MakeLog("INFO - Received packet from: IP:" + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
             //Console.WriteLine("Otrzymaliśmy pakiet od: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-          //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(receivedPacket));
+            //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(receivedPacket));
 
             //przesyłam pakiet do metody przetwarzającej
             bool response = ProcessReceivedPacket(receivedPacket);
@@ -126,6 +128,7 @@ namespace MPLS_Router
                 byte[] packetToSend = pack.CreatePacket(3, myIPAddress, managementIPAddress, (ushort)"Accepted".Length, "Accepted" );
                 //inicjuje start wysyłania przetworzonego pakietu do nadawcy
                 agentSocket.BeginSendTo(packetToSend, 0, packetToSend.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
+                DeviceClass.MakeLog("INFO - Sent accepted messeage to:" + managementEndPoint);
             }
             else
             {
@@ -133,6 +136,7 @@ namespace MPLS_Router
                 byte[] packetToSend = pack.CreatePacket(3, myIPAddress, managementIPAddress, (ushort)"Denied".Length, "Denied");
                 //inicjuje start wysyłania przetworzonego pakietu do nadawcy
                 agentSocket.BeginSendTo(packetToSend, 0, packetToSend.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
+                DeviceClass.MakeLog("INFO - Sent denied messeage to:" + managementEndPoint);
             }
 
             //zeruje bufor odbierający
@@ -173,11 +177,12 @@ namespace MPLS_Router
             try
             {
                 dev.Configuration.LFIBTable.Add(key, value);
-             /*   foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
-                {
-                    //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                    Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                }*/
+                DeviceClass.MakeLog("INFO - Added new record to LFIB Table");
+                /*   foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
+                   {
+                       //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                       Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                   }*/
                 return true;
             }
             catch(ArgumentException)
@@ -189,11 +194,12 @@ namespace MPLS_Router
         {
             string key = part[1] + "&" + part[2];
             bool flag = dev.Configuration.LFIBTable.Remove(key);
-           /* foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
-            {
-                //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-            }*/
+            DeviceClass.MakeLog("INFO - Removed record from LFIB Table");
+            /* foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
+             {
+                 //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                 Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+             }*/
             return flag;
         }
         #endregion
