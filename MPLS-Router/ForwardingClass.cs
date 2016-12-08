@@ -39,8 +39,8 @@ namespace MPLS_Router
                     dev.Forward.ForwardingPacket(fpacket);
                 break;
                 case "swap":
-                    packet.ChangeMplsHeader(packet.BottomOfTheStack, ushort.Parse(labelOut));
-                    packet.ChangeCloudHeader(ushort.Parse(cloudHeaderOut));
+                    packet.ChangeMplsHeader(packet.BottomOfTheStack, ushort.Parse(cloudHeaderOut));
+                    packet.ChangeCloudHeader(ushort.Parse(labelOut));
                 break;
                 case "push":
                     packet.AddMplsHeader((ushort)(packet.BottomOfTheStack + s), ushort.Parse(labelOut));

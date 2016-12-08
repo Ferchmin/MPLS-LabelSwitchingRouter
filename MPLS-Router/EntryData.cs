@@ -20,8 +20,10 @@ namespace MPLS_Router
         public int CloudPortNumber { get; set; }
         [XmlElement("ipMyReceiving")]
         public string LocalIPAdd { get; set; }
-        [XmlElement("portReceiving")]
-        public int LocalPortNumber { get; set; }
+        [XmlElement("agentReceiving")]
+        public int AgentPortNumber { get; set; }
+        [XmlElement("mplsReceiving")]
+        public int MplsPortNumber { get; set; }
         public struct LFIB
         {
             [XmlElement("LabelIn")]

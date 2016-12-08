@@ -24,7 +24,7 @@ namespace MPLS_Router
         public string CloudIPAdd { get; set; }
         public int CloudPortNumber { get; private set; }
         public string LocalIPAdd { get; set; }
-        public int LocalPortNumber { get; private set; }
+        public int mplsPortNumber { get; private set; }
         public int agentPortNumber { get; private set; }
         public Dictionary<string, string> LFIBTable;
         public ConfigurationClass()
@@ -36,7 +36,8 @@ namespace MPLS_Router
             CloudIPAdd = config.CloudIPAdd;
             CloudPortNumber = config.CloudPortNumber;
             LocalIPAdd = config.LocalIPAdd;
-            LocalPortNumber = config.LocalPortNumber;
+            agentPortNumber = config.AgentPortNumber;
+            mplsPortNumber = config.MplsPortNumber;
             foreach (var lfibpack in config.Lfiby)
             {
                 LFIBTable.Add(lfibpack.LabelIn + "&" + lfibpack.PortIn, lfibpack.LabelOut + "&" + lfibpack.PortOut + "&" + lfibpack.operation);

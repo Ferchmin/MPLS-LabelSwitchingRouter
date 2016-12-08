@@ -53,6 +53,7 @@ namespace MPLS_Router
             //tworzymy punkt końcowy centrum zarzadzania
             managementIPEndPoint = new IPEndPoint((IPAddress.Parse(managementIPAddress)), managementPort);
             managementEndPoint = (EndPoint)managementIPEndPoint;
+
             SendIsUp();
             System.Timers.Timer aTimer = new System.Timers.Timer();
             aTimer.Elapsed += new ElapsedEventHandler(SendKeepAlive);
@@ -84,8 +85,8 @@ namespace MPLS_Router
             agentSocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
 
             //tworzmy log zdarzenia
-            Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
+            //Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
+            //Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
         }
         public void SendPacket(IAsyncResult res)
         {
@@ -93,8 +94,8 @@ namespace MPLS_Router
             int size = agentSocket.EndSendTo(res);
 
             //tworzmy log zdarzenia
-            Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
+            //Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
+            //Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
         }
 
         public void ReceivedPacket(IAsyncResult res)
@@ -112,8 +113,8 @@ namespace MPLS_Router
             receivedIPEndPoint = (IPEndPoint)managementEndPoint;
 
             //generujemy logi
-            Console.WriteLine("Otrzymaliśmy pakiet od: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(receivedPacket));
+            //Console.WriteLine("Otrzymaliśmy pakiet od: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
+          //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(receivedPacket));
 
             //przesyłam pakiet do metody przetwarzającej
             bool response = ProcessReceivedPacket(receivedPacket);
@@ -169,7 +170,7 @@ namespace MPLS_Router
         public bool AddNewKey(string[] part)
         {
             string key = part[1] + "&" + part[2];
-            string value = part[3] + "&" + part[4];
+            string value = part[3] + "&" + part[4] + "&" +part[4];
             try
             {
                 dev.Configuration.LFIBTable.Add(key, value);

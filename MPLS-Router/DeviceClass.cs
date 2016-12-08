@@ -33,9 +33,9 @@ namespace MPLS_Router
         public DeviceClass()
         {
             config = new MPLS_Router.ConfigurationClass();
-            agent = new MPLS_Router.ManagementAgent(config.LocalIPAdd, config.LocalPortNumber, config.ManagmentIPAdd, config.ManagmentPortNumber, this);
+            agent = new MPLS_Router.ManagementAgent(config.LocalIPAdd, config.agentPortNumber, config.ManagmentIPAdd, config.ManagmentPortNumber, this);
             forward = new ForwardingClass(this);
-            port = new PortsClass(config.LocalIPAdd, config.LocalPortNumber, config.CloudIPAdd, config.CloudPortNumber, this);
+            port = new PortsClass(config.LocalIPAdd, config.mplsPortNumber, config.CloudIPAdd, config.CloudPortNumber, this);
             StartWorking();
         }
 
