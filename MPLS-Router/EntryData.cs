@@ -10,17 +10,17 @@ namespace MPLS_Router
 {
     public class EntryData
     {
-        [XmlElement("ipManagment")]
+        [XmlElement("ipManagement")]
         public string ManagmentIPAdd { get; set; }
-        [XmlElement("portManagment")]
+        [XmlElement("portManagement")]
         public int ManagmentPortNumber { get; set; }
         [XmlElement("ipCloudSending")]
         public string CloudIPAdd { get; set; }
         [XmlElement("portCloudSending")]
         public int CloudPortNumber { get; set; }
-        [XmlElement("ipCloudReceiving")]
+        [XmlElement("ipMyReceiving")]
         public string LocalIPAdd { get; set; }
-        [XmlElement("portCloudReceiving")]
+        [XmlElement("portReceiving")]
         public int LocalPortNumber { get; set; }
         public struct LFIB
         {

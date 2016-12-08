@@ -56,12 +56,12 @@ namespace MPLS_Router
             //tworzymy gniazdo i przypisujemy mu numer portu i IP zgodne z plikiem konfig
             mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             myIpEndPoint = new IPEndPoint((IPAddress.Parse(myIpAddress)), myPort);
-            mySocket.Bind(cloudIPEndPoint);
+            mySocket.Bind(myIpEndPoint);
 
             //tworzymy punkt końcowy chmury kablowej
             cloudIPEndPoint = new IPEndPoint((IPAddress.Parse(cloudIpAddress)), cloudPort);
             cloudEndPoint = (EndPoint)cloudIPEndPoint;
-
+            
             //tworzymy bufor nasłuchujący
             buffer = new byte[1024];
 

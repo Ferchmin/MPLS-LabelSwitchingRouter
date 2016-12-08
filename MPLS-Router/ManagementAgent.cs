@@ -40,13 +40,15 @@ namespace MPLS_Router
             this.agentPort = agentPort;
             this.managementIPAddress = managementIPAddress;
             this.managementPort = managementPort;
+            System.Console.WriteLine(managementIPAddress);
         }
         private void InitializeSocket()
         {
             //tworzymy gniazdo i przypisujemy mu numer portu i IP zgodne z plikiem konfig
             agentSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             myIPEndPoint = new IPEndPoint((IPAddress.Parse(myIPAddress)), agentPort);
-            agentSocket.Bind(managementIPEndPoint);
+            agentSocket.Bind(myIPEndPoint);
+
 
             //tworzymy punkt końcowy centrum zarzadzania
             managementIPEndPoint = new IPEndPoint((IPAddress.Parse(managementIPAddress)), managementPort);
@@ -71,8 +73,8 @@ namespace MPLS_Router
             agentSocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
 
             //tworzmy log zdarzenia
-            Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
-            Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
+          //  Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
+          //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
         }
         private void SendKeepAlive(object source, ElapsedEventArgs e)
         {
