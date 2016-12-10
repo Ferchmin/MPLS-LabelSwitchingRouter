@@ -16,19 +16,35 @@ namespace MPLS_Router
         {
             object obj;
             XmlSerializer deserializer = new XmlSerializer(typeof(EntryData));
-            using (TextReader reader = new StreamReader(@filepath))
+            try
             {
-                obj = deserializer.Deserialize(reader);
+                using (TextReader reader = new StreamReader(@filepath))
+                {
+                    obj = deserializer.Deserialize(reader);
+                }
+                return data = obj as EntryData;
             }
-            return data = obj as EntryData;
+            catch (Exception e)
+            {
+                DeviceClass.MakeLog("ERROR - Deserialization cannot be complited.");
+                return null;
+            }
+
         }
-        public static void Serialization()
+        public static void Serialization(string filepath)
         {
             data = new EntryData();
             XmlSerializer serializer = new XmlSerializer(typeof(EntryData));
-            using (TextWriter writer = new StreamWriter("EntryData"))
+            try
             {
-                serializer.Serialize(writer, data);
+                using (TextWriter writer = new StreamWriter(@filepath))
+                {
+                    serializer.Serialize(writer, data);
+                }
+            }
+            catch (Exception e)
+            {
+                DeviceClass.MakeLog("ERROR - Serialization cannot be complited.");
             }
         }
     }

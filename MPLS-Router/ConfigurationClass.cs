@@ -1,10 +1,4 @@
-﻿using System.Xml;
-using System.Xml.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 /*
  * Klasa odpowiedzialna za wczytywanie pliku konfiguracyjnego
@@ -13,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace MPLS_Router
 {
-    /*
-     * 
-     * 
-     */
     public class ConfigurationClass
     {
         public string ManagmentIPAdd { get; private set; }
@@ -27,20 +17,38 @@ namespace MPLS_Router
         public int mplsPortNumber { get; private set; }
         public int agentPortNumber { get; private set; }
         public Dictionary<string, string> LFIBTable;
+
+        private bool incorrectConfigFileFormat;
+        public bool IncorrectConfigFileFormat
+        {
+            get { return incorrectConfigFileFormat; }
+        }
+
+
+
         public ConfigurationClass(string filepath)
         {
             LFIBTable = new Dictionary<string, string>();
+
+
             var config = LoadingData.Deserialization(filepath);
-            ManagmentIPAdd = config.ManagmentIPAdd;
-            ManagmentPortNumber = config.ManagmentPortNumber;
-            CloudIPAdd = config.CloudIPAdd;
-            CloudPortNumber = config.CloudPortNumber;
-            LocalIPAdd = config.LocalIPAdd;
-            agentPortNumber = config.AgentPortNumber;
-            mplsPortNumber = config.MplsPortNumber;
-            foreach (var lfibpack in config.Lfiby)
+            if (config != null)
             {
-                LFIBTable.Add(lfibpack.LabelIn + "&" + lfibpack.PortIn, lfibpack.LabelOut + "&" + lfibpack.PortOut + "&" + lfibpack.operation);
+                ManagmentIPAdd = config.ManagmentIPAdd;
+                ManagmentPortNumber = config.ManagmentPortNumber;
+                CloudIPAdd = config.CloudIPAdd;
+                CloudPortNumber = config.CloudPortNumber;
+                LocalIPAdd = config.LocalIPAdd;
+                agentPortNumber = config.AgentPortNumber;
+                mplsPortNumber = config.MplsPortNumber;
+                foreach (var lfibpack in config.Lfiby)
+                {
+                    LFIBTable.Add(lfibpack.LabelIn + "&" + lfibpack.PortIn, lfibpack.LabelOut + "&" + lfibpack.PortOut + "&" + lfibpack.operation);
+                }
+            }
+            else
+            {
+                incorrectConfigFileFormat = true;
             }
         }
     }

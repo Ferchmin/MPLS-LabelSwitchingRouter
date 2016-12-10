@@ -26,7 +26,11 @@ namespace MPLS_Router
             ushort keyPart1 = packet.MplsLabel;
             DeviceClass.MakeLog("INFO - Packet's label:" + keyPart1 + " Interface: " + keyPart2);
             string key = keyPart1.ToString() + "&" + keyPart2.ToString();
-            string value = dev.Configuration.LFIBTable[key];
+
+            string value = null;
+            if (dev.Configuration.LFIBTable.ContainsKey(key))
+                value = dev.Configuration.LFIBTable[key];
+
             if (value != null)
             {
                 string[] valueParts = value.Split('&');
@@ -59,11 +63,16 @@ namespace MPLS_Router
                     default:
 
                         break;
-
                 }
+
+                fpacket = packet.Packet;
+                return fpacket;
             }
-            fpacket = packet.Packet;
-            return fpacket;
+            else
+            {
+                DeviceClass.MakeLog("ERROR - Cannot find the value in LFIBTable of key: " + key);
+                return null;
+            }
         }
     }
 }

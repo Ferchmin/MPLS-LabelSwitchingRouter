@@ -40,7 +40,8 @@ namespace MPLS_Router
             this.agentPort = agentPort;
             this.managementIPAddress = managementIPAddress;
             this.managementPort = managementPort;
-            System.Console.WriteLine(managementIPAddress);
+
+            Console.WriteLine("Node Agent IP Address: " + managementIPAddress);
         }
         private void InitializeSocket()
         {
