@@ -138,13 +138,9 @@ namespace MPLS_Router
 
                 //jeżeli komunikacja omija agenta to od razu wysyłaj
                 if (packet != null)
-                {
-
-
                     //inicjuje start wysyłania przetworzonego pakietu do nadawcy
                     mySocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, cloudEndPoint, new AsyncCallback(SendPacket), receivedIPEndPoint);
-                    mySocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, cloudEndPoint, new AsyncCallback(SendPacket), receivedIPEndPoint);
-                }
+
             }
         }
 
