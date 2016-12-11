@@ -125,7 +125,7 @@ namespace MPLS_Router
                 Array.Copy(buffer, receivedPacket, receivedPacket.Length);
 
                 //generujemy logi
-                DeviceClass.MakeLog("INFO - Received packet from (cloud): IP:" + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
+                DeviceClass.MakeLog("INFO - Received packet from: IP: " + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
 
                 //zeruje bufor odbierający
                 buffer = new byte[bufferSize];
@@ -155,7 +155,7 @@ namespace MPLS_Router
             var endPoint = res.AsyncState as IPEndPoint;
             
             //tworzmy log zdarzenia
-            DeviceClass.MakeLog("INFO - Packet send to: IP:" + endPoint.Address + " Port: " + endPoint.Port);
+            DeviceClass.MakeLog("INFO - Packet send to: IP: " + endPoint.Address + " Port: " + endPoint.Port);
         }
 
         /*

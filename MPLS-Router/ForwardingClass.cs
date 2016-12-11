@@ -36,15 +36,26 @@ namespace MPLS_Router
                 string[] valueParts = value.Split('&');
                 string cloudHeaderOut = valueParts[0];
                 string labelOut = valueParts[1];
-                ushort s = 1;
                 string operation = valueParts[2];
                 switch (operation)
                 {
                     case "pop":
-                        packet.DeleteMplsHeader();
-                        fpacket = packet.Packet;
-                        DeviceClass.MakeLog("INFO - Popped label.");
-                        dev.Forward.ForwardingPacket(fpacket);
+                        ushort labelS = packet.BottomOfTheStack;
+
+                        if (labelS == 0)
+                        {
+                            packet.DeleteMplsHeader();
+                            fpacket = packet.Packet;
+                            DeviceClass.MakeLog("INFO - Popped label.");
+
+                            dev.Forward.ForwardingPacket(fpacket);
+                        }
+                        else
+                        {
+                            packet.ChangeMplsHeader(0, 0);
+                            fpacket = packet.Packet;
+                            DeviceClass.MakeLog("INFO - Popped label.");
+                        }
                         break;
                     case "swap":
                         packet.ChangeMplsHeader(packet.BottomOfTheStack, ushort.Parse(cloudHeaderOut));
@@ -54,7 +65,7 @@ namespace MPLS_Router
                         dev.Forward.ForwardingPacket(fpacket);
                         break;
                     case "push":
-                        packet.AddMplsHeader((ushort)(packet.BottomOfTheStack + s), ushort.Parse(cloudHeaderOut));
+                        packet.AddMplsHeader(0, ushort.Parse(cloudHeaderOut));
                         packet.ChangeCloudHeader(ushort.Parse(labelOut));
                         fpacket = packet.Packet;
                         DeviceClass.MakeLog("INFO - Pushed label.");
