@@ -53,8 +53,9 @@ namespace MPLS_Router
                         else
                         {
                             packet.ChangeMplsHeader(0, 0);
+                            packet.ChangeCloudHeader(ushort.Parse(labelOut));
                             fpacket = packet.Packet;
-                            DeviceClass.MakeLog("INFO - Popped label.");
+                            DeviceClass.MakeLog("INFO - Popped final label.");
                         }
                         break;
                     case "swap":

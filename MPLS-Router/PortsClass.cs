@@ -140,7 +140,6 @@ namespace MPLS_Router
                 if (packet != null)
                     //inicjuje start wysyłania przetworzonego pakietu do nadawcy
                     mySocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, cloudEndPoint, new AsyncCallback(SendPacket), receivedIPEndPoint);
-
             }
         }
 
