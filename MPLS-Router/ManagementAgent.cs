@@ -50,6 +50,7 @@ namespace MPLS_Router
             myIPEndPoint = new IPEndPoint((IPAddress.Parse(myIPAddress)), agentPort);
             agentSocket.Bind(myIPEndPoint);
             DeviceClass.MakeLog("INFO - Agent Socket: IP:" + myIPAddress + " Port:" + agentPort);
+            DeviceClass.MakeConsoleLog("INFO - Agent Socket: IP:" + myIPAddress + " Port:" + agentPort);
 
             //tworzymy punkt końcowy centrum zarzadzania
             managementIPEndPoint = new IPEndPoint((IPAddress.Parse(managementIPAddress)), managementPort);
@@ -66,6 +67,7 @@ namespace MPLS_Router
             //nasłuchujemy
             agentSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref managementEndPoint, new AsyncCallback(ReceivedPacket), null);
             DeviceClass.MakeLog("INFO - Start Listening.");
+            DeviceClass.MakeConsoleLog("INFO - Start Listening.");
         }
 
         private void SendIsUp()
@@ -75,6 +77,7 @@ namespace MPLS_Router
             //inicjuje start wysyłania przetworzonego pakietu do nadawcy
             agentSocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
             DeviceClass.MakeLog("INFO - Sent isUp notification to:" + managementEndPoint );
+            DeviceClass.MakeConsoleLog("INFO - Sent isUp notification to:" + managementEndPoint);
             //tworzmy log zdarzenia
             //  Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
             //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
@@ -115,6 +118,7 @@ namespace MPLS_Router
             //inicjuje start wysyłania przetworzonego pakietu do nadawcy
             agentSocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
             DeviceClass.MakeLog("INFO - Sent LFIBTable to:" + managementEndPoint);
+            DeviceClass.MakeConsoleLog("INFO - Sent LFIBTable to:" + managementEndPoint);
         }
 
         public void ReceivedPacket(IAsyncResult res)
@@ -133,6 +137,7 @@ namespace MPLS_Router
 
             //generujemy logi
             DeviceClass.MakeLog("INFO - Received packet from: IP:" + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
+            DeviceClass.MakeConsoleLog("INFO - Received packet from: IP:" + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
             //Console.WriteLine("Otrzymaliśmy pakiet od: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
             //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(receivedPacket));
 
@@ -147,6 +152,7 @@ namespace MPLS_Router
                 //inicjuje start wysyłania przetworzonego pakietu do nadawcy
                 agentSocket.BeginSendTo(packetToSend, 0, packetToSend.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
                 DeviceClass.MakeLog("INFO - Sent accepted messeage to:" + managementEndPoint);
+                DeviceClass.MakeConsoleLog("INFO - Sent accepted messeage to:" + managementEndPoint);
             }
             else if(response==0)
             {
@@ -155,6 +161,7 @@ namespace MPLS_Router
                 //inicjuje start wysyłania przetworzonego pakietu do nadawcy
                 agentSocket.BeginSendTo(packetToSend, 0, packetToSend.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
                 DeviceClass.MakeLog("INFO - Sent denied messeage to:" + managementEndPoint);
+                DeviceClass.MakeConsoleLog("INFO - Sent denied messeage to:" + managementEndPoint);
             }
             else
             {
@@ -218,6 +225,7 @@ namespace MPLS_Router
             {
                 dev.Configuration.LFIBTable.Add(key, value);
                 DeviceClass.MakeLog("INFO - Added new record to LFIB Table");
+                DeviceClass.MakeConsoleLog("INFO - Added new record to LFIB Table");
                 /*   foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
                    {
                        //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
@@ -227,6 +235,8 @@ namespace MPLS_Router
             }
             catch(ArgumentException)
             {
+                DeviceClass.MakeLog("INFO - Couldn't add record to LFIB Table");
+                DeviceClass.MakeConsoleLog("INFO - Couldn't add record to LFIB Table");
                 return false;
             }
         }
@@ -234,8 +244,16 @@ namespace MPLS_Router
         {
             string key = part[1] + "&" + part[2];
             bool flag = dev.Configuration.LFIBTable.Remove(key);
-            if(flag==true)
+            if (flag == true)
+            {
                 DeviceClass.MakeLog("INFO - Removed record from LFIB Table");
+                DeviceClass.MakeConsoleLog("INFO - Removed record from LFIB Table");
+            }
+            else
+            {
+                DeviceClass.MakeLog("INFO - Couldn't remove record from LFIB Table");
+                DeviceClass.MakeConsoleLog("INFO - Couldn't remove record from LFIB Table");
+            }
             /* foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
              {
                  //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);

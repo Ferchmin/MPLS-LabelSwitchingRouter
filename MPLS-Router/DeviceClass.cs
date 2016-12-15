@@ -85,7 +85,7 @@ namespace MPLS_Router
         public void StartWorking()
         {
             MakeLog("INFO - Start working.");
-
+            MakeConsoleLog("INFO - Start working.");
             Console.WriteLine();
             Console.WriteLine("Node is working. Write 'end' to close the program.");
             Console.WriteLine("<------------------------------------------------->");
@@ -98,6 +98,7 @@ namespace MPLS_Router
 
             //LOG
             DeviceClass.MakeLog("INFO - Stop working.");
+            DeviceClass.MakeConsoleLog("INFO - Stop working.");
         }
 
         public void StopWorking(string reason)
@@ -109,6 +110,7 @@ namespace MPLS_Router
 
             //LOG
             DeviceClass.MakeLog("INFO - Stop working.");
+            DeviceClass.MakeConsoleLog("INFO - Stop working.");
 
             //wyłącz konsolę i zwolnij calą pamięć alokowaną
             Environment.Exit(0);
@@ -126,8 +128,12 @@ namespace MPLS_Router
                 file.WriteLine(log);
                 logID++;
             }
-
-            Console.WriteLine(log);
+        }
+        public static void MakeConsoleLog(string logDescription)
+        {
+            string log;
+            log = "#" + logID + " | " + DateTime.Now.ToString("hh:mm:ss") + " " + logDescription;
+            Console.WriteLine("\n" + log);
         }
         private void InitializeLogLastIdNumber()
         {

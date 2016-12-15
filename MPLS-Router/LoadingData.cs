@@ -27,6 +27,7 @@ namespace MPLS_Router
             catch (Exception e)
             {
                 DeviceClass.MakeLog("ERROR - Deserialization cannot be complited.");
+                DeviceClass.MakeConsoleLog("ERROR - Deserialization cannot be complited.");
                 return null;
             }
 
@@ -45,6 +46,7 @@ namespace MPLS_Router
             catch (Exception e)
             {
                 DeviceClass.MakeLog("ERROR - Serialization cannot be complited.");
+                DeviceClass.MakeConsoleLog("ERROR - Serialization cannot be complited.");
             }
         }
     }

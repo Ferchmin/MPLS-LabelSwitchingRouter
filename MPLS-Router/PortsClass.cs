@@ -65,11 +65,13 @@ namespace MPLS_Router
                 myIpEndPoint = new IPEndPoint((IPAddress.Parse(myIpAddress)), myPort);
                 mySocket.Bind(myIpEndPoint);
                 DeviceClass.MakeLog("INFO - Router Socket: IP:" + myIpAddress + " Port:" + myPort);
+                DeviceClass.MakeConsoleLog("INFO - Router Socket: IP:" + myIpAddress + " Port:" + myPort);
             }
             catch
             {
                 //LOG
                 DeviceClass.MakeLog("ERROR - Incorrect IP address or port number or these values are already in use.");
+                DeviceClass.MakeConsoleLog("ERROR - Incorrect IP address or port number or these values are already in use.");
                 dev.StopWorking("Incorrect IP address or port number or these values are already in use.");
             }
 
@@ -83,6 +85,7 @@ namespace MPLS_Router
             {
                 //LOG
                 DeviceClass.MakeLog("ERROR - Incorrect CLOUD IP address or port number.");
+                DeviceClass.MakeConsoleLog("ERROR - Incorrect CLOUD IP address or port number.");
                 dev.StopWorking("Incorrect CLOUD IP address or port number.");
             }
 
@@ -92,6 +95,7 @@ namespace MPLS_Router
             //nasłuchujemy
             mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref cloudEndPoint, new AsyncCallback(ReceivedPacket), null);
             DeviceClass.MakeLog("INFO - Start Listening.");
+            DeviceClass.MakeConsoleLog("INFO - Start Listening.");
         }
 
         /*
@@ -110,7 +114,7 @@ namespace MPLS_Router
             catch
             {
                 DeviceClass.MakeLog("ERROR - Cannot send packet. Cloud unreachable.");
-
+                DeviceClass.MakeConsoleLog("ERROR - Cannot send packet. Cloud unreachable.");
                 //uruchamiam ponowne nasłuchiwanie
                 mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref cloudEndPoint, new AsyncCallback(ReceivedPacket), null);
                 return;
@@ -126,7 +130,7 @@ namespace MPLS_Router
 
                 //generujemy logi
                 DeviceClass.MakeLog("INFO - Received packet from: IP: " + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
-
+                DeviceClass.MakeConsoleLog("INFO - Received packet from: IP: " + receivedIPEndPoint.Address + " Port: " + receivedIPEndPoint.Port);
                 //zeruje bufor odbierający
                 buffer = new byte[bufferSize];
 
@@ -155,6 +159,7 @@ namespace MPLS_Router
             
             //tworzmy log zdarzenia
             DeviceClass.MakeLog("INFO - Packet send to: IP: " + endPoint.Address + " Port: " + endPoint.Port);
+            DeviceClass.MakeConsoleLog("INFO - Packet send to: IP: " + endPoint.Address + " Port: " + endPoint.Port);
         }
 
         /*
