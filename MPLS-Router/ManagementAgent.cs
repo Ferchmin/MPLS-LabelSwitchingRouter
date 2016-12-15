@@ -234,7 +234,8 @@ namespace MPLS_Router
         {
             string key = part[1] + "&" + part[2];
             bool flag = dev.Configuration.LFIBTable.Remove(key);
-            DeviceClass.MakeLog("INFO - Removed record from LFIB Table");
+            if(flag==true)
+                DeviceClass.MakeLog("INFO - Removed record from LFIB Table");
             /* foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
              {
                  //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
