@@ -43,7 +43,7 @@ namespace MPLS_Router
                 mplsPortNumber = config.MplsPortNumber;
                 foreach (var lfibpack in config.Lfiby)
                 {
-                    LFIBTable.Add(lfibpack.LabelIn + "&" + lfibpack.PortIn, lfibpack.LabelOut + "&" + lfibpack.PortOut + "&" + lfibpack.operation);
+                    LFIBTable.Add(lfibpack.LabelIn + "&" + lfibpack.SrcInterface, lfibpack.LabelOut + "&" + lfibpack.DstInterface + "&" + lfibpack.operation);
                 }
             }
             else

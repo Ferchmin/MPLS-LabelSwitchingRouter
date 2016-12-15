@@ -133,7 +133,7 @@ namespace MPLS_Router
         {
             string log;
             log = "#" + logID + " | " + DateTime.Now.ToString("hh:mm:ss") + " " + logDescription;
-            Console.WriteLine("\n" + log);
+            Console.WriteLine(log);
         }
         private void InitializeLogLastIdNumber()
         {

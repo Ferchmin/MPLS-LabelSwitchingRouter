@@ -28,12 +28,12 @@ namespace MPLS_Router
         {
             [XmlElement("LabelIn")]
             public int LabelIn { get; set; }
-            [XmlElement("PortIn")]
-            public int PortIn { get; set; }
+            [XmlElement("SrcInterface")]
+            public int SrcInterface { get; set; }
             [XmlElement("LabelOut")]
             public int LabelOut { get; set; }
-            [XmlElement("PortOut")]
-            public int PortOut { get; set; }
+            [XmlElement("DstInterface")]
+            public int DstInterface { get; set; }
             [XmlElement("Operation")]
             public string operation { get; set; }
         }
