@@ -50,7 +50,7 @@ namespace MPLS_Router
                 fileLogPath = config.LocalIPAdd + ".txt";
                 InitializeLogLastIdNumber();
 
-                //agent = new ManagementAgent(config.LocalIPAdd, config.agentPortNumber, config.ManagmentIPAdd, config.ManagmentPortNumber, this);
+                agent = new ManagementAgent(config.LocalIPAdd, config.agentPortNumber, config.ManagmentIPAdd, config.ManagmentPortNumber, this);
                 forward = new ForwardingClass(this);
                 port = new PortsClass(config.LocalIPAdd, config.mplsPortNumber, config.CloudIPAdd, config.CloudPortNumber, this);
 
@@ -64,6 +64,8 @@ namespace MPLS_Router
         {
             Console.WriteLine("\nEnter the path of the configuration file:");
             fileConfigurationPath = Console.ReadLine();
+            if (fileConfigurationPath == "")
+                fileConfigurationPath = "LSR_3.xml";
             Console.WriteLine();
 
             bool fileNotExist = !File.Exists(fileConfigurationPath);
