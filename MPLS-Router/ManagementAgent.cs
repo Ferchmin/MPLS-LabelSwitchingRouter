@@ -49,7 +49,7 @@ namespace MPLS_Router
             agentSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             myIPEndPoint = new IPEndPoint((IPAddress.Parse(myIPAddress)), agentPort);
             agentSocket.Bind(myIPEndPoint);
-            DeviceClass.MakeLog("INFO - Agent Socket: IP:" + myIPAddress + " Port:" +agentPort);
+            DeviceClass.MakeLog("INFO - Agent Socket: IP:" + myIPAddress + " Port:" + agentPort);
 
             //tworzymy punkt końcowy centrum zarzadzania
             managementIPEndPoint = new IPEndPoint((IPAddress.Parse(managementIPAddress)), managementPort);
@@ -99,6 +99,23 @@ namespace MPLS_Router
             //Console.WriteLine("Wysłaliśmy pakiet do: " + receivedIPEndPoint.Address + " port " + receivedIPEndPoint.Port);
             //Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(packet));
         }
+        public void SendTable()
+        {
+            StringBuilder tab = new StringBuilder();
+            foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
+            {
+                string[] keyParts = kvp.Key.Split('&');
+                string[] valueParts = kvp.Value.Split('&');
+                string row = "LabelIn: " + keyParts[0] + " InterfaceIn: " + keyParts[1] + " LabelOut: " + valueParts[0] + " InterfaceOut: " + valueParts[1] + " Operation: " + valueParts[2] + " | ";
+                tab.Append(row);
+            }
+            string table = tab.ToString();
+            ManagementPacket pack = new ManagementPacket();
+            packet = pack.CreatePacket(3, myIPAddress, managementIPAddress, (ushort)table.Length, table);
+            //inicjuje start wysyłania przetworzonego pakietu do nadawcy
+            agentSocket.BeginSendTo(packet, 0, packet.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
+            DeviceClass.MakeLog("INFO - Sent LFIBTable to:" + managementEndPoint);
+        }
 
         public void ReceivedPacket(IAsyncResult res)
         {
@@ -120,10 +137,10 @@ namespace MPLS_Router
             //  Console.WriteLine("Pakieto to: " + Encoding.UTF8.GetString(receivedPacket));
 
             //przesyłam pakiet do metody przetwarzającej
-            bool response = ProcessReceivedPacket(receivedPacket);
+            Int16 response = ProcessReceivedPacket(receivedPacket);
 
             //jeżeli komenda centrum zarzadzania zostala poprawnie wykonana to odsylamy wiadomosc Accepted, jezeli nie to Denied
-            if (response)
+            if (response==1)
             {
                 ManagementPacket pack = new ManagementPacket();
                 byte[] packetToSend = pack.CreatePacket(3, myIPAddress, managementIPAddress, (ushort)"Accepted".Length, "Accepted" );
@@ -131,13 +148,17 @@ namespace MPLS_Router
                 agentSocket.BeginSendTo(packetToSend, 0, packetToSend.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
                 DeviceClass.MakeLog("INFO - Sent accepted messeage to:" + managementEndPoint);
             }
-            else
+            else if(response==0)
             {
                 ManagementPacket pack = new ManagementPacket();
                 byte[] packetToSend = pack.CreatePacket(3, myIPAddress, managementIPAddress, (ushort)"Denied".Length, "Denied");
                 //inicjuje start wysyłania przetworzonego pakietu do nadawcy
                 agentSocket.BeginSendTo(packetToSend, 0, packetToSend.Length, SocketFlags.None, managementEndPoint, new AsyncCallback(SendPacket), null);
                 DeviceClass.MakeLog("INFO - Sent denied messeage to:" + managementEndPoint);
+            }
+            else
+            {
+
             }
 
             //zeruje bufor odbierający
@@ -147,30 +168,48 @@ namespace MPLS_Router
             agentSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref managementEndPoint, new AsyncCallback(ReceivedPacket), null);
         }
         #region Obsluga komendy centrum zarzadzania
-        public bool ProcessReceivedPacket(byte[] pack)
+        public Int16 ProcessReceivedPacket(byte[] pack)
         {
             ManagementPacket packet = new ManagementPacket(pack);
             packet.ReadHolePacket();
             if (packet.DataIdentifier == 2)
             {
-                bool flag = ProcessCommand(packet.Data);
+                Int16 flag = ProcessCommand(packet.Data);
                 return flag;
             }
             else
-                return false;
+                return 0;
         }
 
-        public bool ProcessCommand (string command)
+        public Int16 ProcessCommand(string command)
         {
-            bool flag = false;
+            Int16 flag = 0;
             string[] parts = command.Split();
             if (String.Equals(parts[0], "Add"))
-                return flag = AddNewKey(parts);
+            {
+                bool tmpflag = AddNewKey(parts);
+                if (tmpflag == true)
+                    return 1;
+                else
+                    return flag;
+            }
             else if (String.Equals(parts[0], "Remove"))
-                return flag = RemoveKey(parts);
+            {
+                bool tmpflag = RemoveKey(parts);
+                if (tmpflag == true)
+                    return 1;
+                else
+                    return flag;
+            }
+            else if (String.Equals(parts[0], "GetTable"))
+            {
+                SendTable();
+                return 3;
+            }
             else
                 return flag;
         }
+
         public bool AddNewKey(string[] part)
         {
             string key = part[1] + "&" + part[2];
