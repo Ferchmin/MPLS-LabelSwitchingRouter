@@ -26,7 +26,7 @@ namespace MPLS_Router
             ushort keyPart1 = packet.MplsLabel;
             DeviceClass.MakeLog("INFO - Packet's label:" + keyPart1 + " Interface: " + keyPart2);
             string key = keyPart1.ToString() + "&" + keyPart2.ToString();
-
+            bool flagError = true;
             string value = null;
             if (dev.Configuration.LFIBTable.ContainsKey(key))
                 value = dev.Configuration.LFIBTable[key];
@@ -47,13 +47,14 @@ namespace MPLS_Router
                             packet.DeleteMplsHeader();
                             fpacket = packet.Packet;
                             DeviceClass.MakeLog("INFO - Popped label.");
-
+                            flagError = false;
                             dev.Forward.ForwardingPacket(fpacket);
                         }
                         else
                         {
                             packet.ChangeMplsHeader(0, 0);
                             packet.ChangeCloudHeader(ushort.Parse(labelOut));
+                            flagError = false;
                             fpacket = packet.Packet;
                             DeviceClass.MakeLog("INFO - Popped final label.");
                         }
@@ -62,6 +63,7 @@ namespace MPLS_Router
                         packet.ChangeMplsHeader(packet.BottomOfTheStack, ushort.Parse(cloudHeaderOut));
                         packet.ChangeCloudHeader(ushort.Parse(labelOut));
                         fpacket = packet.Packet;
+                        flagError = false;
                         DeviceClass.MakeLog("INFO - Swapped label.");
                         dev.Forward.ForwardingPacket(fpacket);
                         break;
@@ -69,6 +71,7 @@ namespace MPLS_Router
                         packet.AddMplsHeader(0, ushort.Parse(cloudHeaderOut));
                         packet.ChangeCloudHeader(ushort.Parse(labelOut));
                         fpacket = packet.Packet;
+                        flagError = false;
                         DeviceClass.MakeLog("INFO - Pushed label.");
                         dev.Forward.ForwardingPacket(fpacket);
                         break;
@@ -82,7 +85,8 @@ namespace MPLS_Router
             }
             else
             {
-                DeviceClass.MakeLog("ERROR - Cannot find the value in LFIBTable of key: " + key);
+                if(flagError==true)
+                    DeviceClass.MakeLog("ERROR - Cannot find the value in LFIBTable of key: " + key);
                 return null;
             }
         }
