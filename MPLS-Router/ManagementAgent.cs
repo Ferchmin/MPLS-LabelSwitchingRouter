@@ -104,9 +104,9 @@ namespace MPLS_Router
             StringBuilder tab = new StringBuilder();
             foreach (KeyValuePair<string, string> kvp in dev.Configuration.LFIBTable)
             {
-                string[] keyParts = kvp.Key.Split('&');
-                string[] valueParts = kvp.Value.Split('&');
-                string row = "LabelIn: " + keyParts[0] + " InterfaceIn: " + keyParts[1] + " LabelOut: " + valueParts[0] + " InterfaceOut: " + valueParts[1] + " Operation: " + valueParts[2] + " | ";
+              //  string[] keyParts = kvp.Key.Split('&');
+              //  string[] valueParts = kvp.Value.Split('&');
+                string row = kvp.Key + "&" +kvp.Value + "|";
                 tab.Append(row);
             }
             string table = tab.ToString();
