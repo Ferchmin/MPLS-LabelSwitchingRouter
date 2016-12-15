@@ -138,7 +138,7 @@ namespace MPLS_Router
                 mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref cloudEndPoint, new AsyncCallback(ReceivedPacket), null);
 
                 //przesyłam pakiet do metody przetwarzającej
-                packet = dev.Forward.ForwardingPacket(receivedPacket);
+                packet = dev.Forward.ForwardingPacket(receivedPacket, true);
 
                 //jeżeli komunikacja omija agenta to od razu wysyłaj
                 if (packet != null)

@@ -123,8 +123,20 @@ namespace MPLS_Router
 
         public void ReceivedPacket(IAsyncResult res)
         {
-            //kończymy odbieranie pakietu - metoda zwraca rozmiar faktycznie otrzymanych danych
-            int size = agentSocket.EndReceiveFrom(res, ref managementEndPoint);
+            int size;
+            try
+            {
+                //kończymy odbieranie pakietu - metoda zwraca rozmiar faktycznie otrzymanych danych
+                size = agentSocket.EndReceiveFrom(res, ref managementEndPoint);
+            }
+            catch
+            {
+                DeviceClass.MakeLog("ERROR - Cannot send packet. ManagementCentre unreachable.");
+                DeviceClass.MakeConsoleLog("ERROR - Cannot send packet. ManagementCentre unreachable.");
+                //uruchamiam ponowne nasłuchiwanie
+                agentSocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref managementEndPoint, new AsyncCallback(ReceivedPacket), null);
+                return;
+            }
 
             //tworzę tablicę bajtów składającą się jedynie z danych otrzymanych (otrzymany pakiet)
             byte[] receivedPacket = new byte[size];

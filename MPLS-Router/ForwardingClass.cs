@@ -8,7 +8,6 @@ namespace MPLS_Router
 {
     public class ForwardingClass
     {
-        bool flagError = true;
         PortsClass port;
         DeviceClass dev;
         MPLSPacket packet;
@@ -18,7 +17,7 @@ namespace MPLS_Router
             this.dev = dev;
         }
 
-        public byte[] ForwardingPacket (byte[] receivedPacket)
+        public byte[] ForwardingPacket (byte[] receivedPacket, bool flagError)
         {
             packet = new MPLSPacket(receivedPacket);
             packet.ReadCloudHeader();
@@ -50,7 +49,7 @@ namespace MPLS_Router
                             fpacket = packet.Packet;
                             DeviceClass.MakeLog("INFO - Popped label.");
                             DeviceClass.MakeConsoleLog("INFO - Popped label.");
-                            dev.Forward.ForwardingPacket(fpacket);
+                            dev.Forward.ForwardingPacket(fpacket, false);
                         }
                         else
                         {
@@ -67,7 +66,7 @@ namespace MPLS_Router
                         fpacket = packet.Packet;
                         DeviceClass.MakeLog("INFO - Swapped label.");
                         DeviceClass.MakeConsoleLog("INFO - Swapped label.");
-                        dev.Forward.ForwardingPacket(fpacket);
+                        dev.Forward.ForwardingPacket(fpacket, false);
                         break;
                     case "push":
                         packet.AddMplsHeader(0, ushort.Parse(cloudHeaderOut));
@@ -75,7 +74,7 @@ namespace MPLS_Router
                         fpacket = packet.Packet;
                         DeviceClass.MakeLog("INFO - Pushed label.");
                         DeviceClass.MakeConsoleLog("INFO - Pushed label.");
-                        dev.Forward.ForwardingPacket(fpacket);
+                        dev.Forward.ForwardingPacket(fpacket, false);
                         break;
                     default:
 
