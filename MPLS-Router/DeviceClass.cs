@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 /*
@@ -22,6 +23,8 @@ namespace MPLS_Router
         ManagementAgent agent;
         ConfigurationClass config;
         PortsClass port;
+
+        private static ReaderWriterLockSlim _writeLock = new ReaderWriterLockSlim();
         #endregion
 
         #region Public Accessors
@@ -122,12 +125,10 @@ namespace MPLS_Router
         {
             string log;
 
-            using (StreamWriter file = new StreamWriter(fileLogPath, true))
-            {
-                log = "#" + logID + " | " + DateTime.Now.ToString("hh:mm:ss") + " " + logDescription;
-                file.WriteLine(log);
-                logID++;
-            }
+            log = "#" + logID + " | " + DateTime.Now.ToString("hh:mm:ss") + " " + logDescription;
+            WriteToFileThreadSafe(log, fileLogPath);
+            logID++;
+
         }
         public static void MakeConsoleLog(string logDescription)
         {
@@ -149,6 +150,29 @@ namespace MPLS_Router
             }
             else
                 logID = 1;
+        }
+
+        /*
+       * Metoda odpowiedzialna za bezpieczne zapisywanie logów do pliku.
+      */
+        public static void WriteToFileThreadSafe(string text, string path)
+        {
+            // Set Status to Locked
+            _writeLock.EnterWriteLock();
+            try
+            {
+                // Append text to the file
+                using (StreamWriter sw = File.AppendText(path))
+                {
+                    sw.WriteLine(text);
+                    sw.Close();
+                }
+            }
+            finally
+            {
+                // Release lock
+                _writeLock.ExitWriteLock();
+            }
         }
         #endregion
     }
